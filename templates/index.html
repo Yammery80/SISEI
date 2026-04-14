@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulación de Propagación de Virus</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div class="main-container">
+
+    <h1> Simulación de Propagación de Virus</h1>
+    <p class="subtitle">Modelo basado en ecuaciones diferenciales</p>
+
+    <div class="card">
+
+        <div class="form-group">
+            <label>Infectados iniciales (I₀)</label>
+            <input type="number" id="I0" value="10">
+        </div>
+
+        <div class="form-group">
+            <label>Tasa de contagio (β)</label>
+            <input type="number" step="0.01" id="beta" value="0.2">
+        </div>
+
+        <div class="form-group">
+            <label>Tiempo de simulación</label>
+            <input type="number" id="t_max" value="50">
+        </div>
+
+        <button onclick="simular()">Simular</button>
+
+    </div>
+
+    <div class="chart-card">
+        <canvas id="grafica"></canvas>
+    </div>
+
+</div>
+
+<script src="/static/script.js"></script>
+
+</body>
+</html>
