@@ -12,7 +12,7 @@ function simular() {
         return;
     }
 
-    // 🔥 AQUÍ VA (cuando inicia la simulación)
+    // AQUÍ VA (cuando inicia la simulación)
     boton.classList.add("loading");
     boton.innerText = " Simulando...";
 
@@ -24,9 +24,36 @@ function simular() {
     .then(res => res.json())
     .then(data => {
         graficar(data.t, data.analitica, data.numerica);
+        const final = data.analitica[data.analitica.length - 1];
+
+        if (final > 10000) {
+            mostrarModal(
+            "🚨 Nivel Crítico de Propagación🚨",
+            "El modelo indica un crecimiento exponencial fuera de control.\n\n" +
+            " La tasa de contagio ha superado los niveles seguros.\n" +
+            " El sistema sanitario podría colapsar en poco tiempo.\n\n" +
+            "Se recomienda activar protocolos de contención inmediata y medidas de emergencia."
+            );
+        } 
+        else if (final > 1000) {
+            mostrarModal(
+            "⚠️ Riesgo Elevado de Expansión",
+            "La propagación del virus muestra una tendencia acelerada.\n\n" +
+            " El brote aún puede ser contenido, pero el margen de acción es limitado.\n\n" +
+            "Se recomienda intensificar medidas preventivas y monitoreo continuo."
+            );
+        } 
+        else {
+            mostrarModal(
+            "🟢 Propagación Bajo Control",
+            "El crecimiento del virus se mantiene dentro de parámetros manejables.\n\n" +
+            " Existe una ventana de oportunidad para desarrollar soluciones.\n\n" +
+            "Sin embargo, se recomienda vigilancia constante para evitar cambios inesperados."
+            );
+        }
     })
     .finally(() => {
-        // 🔙 AQUÍ SE QUITA cuando termina
+        //  AQUÍ SE QUITA cuando termina
         boton.classList.remove("loading");
         boton.innerText = "Simular";
     });
@@ -35,9 +62,12 @@ function simular() {
 function graficar(t, analitica, numerica) {
     const ctx = document.getElementById('grafica').getContext('2d');
 
-    if (chart) {
-        chart.destroy();
-    }
+    if (chart) chart.destroy();
+
+    // Gradiente azul elegante
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, "rgba(42, 127, 186, 0.4)");
+    gradient.addColorStop(1, "rgba(42, 127, 186, 0)");
 
     chart = new Chart(ctx, {
         type: 'line',
@@ -45,23 +75,126 @@ function graficar(t, analitica, numerica) {
             labels: t,
             datasets: [
                 {
-                    label: 'Solución Analítica',
+                    label: 'Modelo Analítico',
                     data: analitica,
-                    borderWidth: 2
+                    borderColor: "#2A7FBA",
+                    backgroundColor: gradient,
+                    fill: true,
+                    tension: 0.4, // curva suave
+                    pointRadius: 0,
+                    borderWidth: 3
                 },
                 {
-                    label: 'Solución Numérica (Euler)',
+                    label: 'Modelo Numérico',
                     data: numerica,
-                    borderWidth: 2
+                    borderColor: "#1E3A5F",
+                    borderDash: [6, 4], // línea discontinua elegante
+                    tension: 0.4,
+                    pointRadius: 0,
+                    borderWidth: 2,
+                    fill: false
                 }
             ]
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
+
+            interaction: {
+                mode: 'nearest',
+                intersect: false
+            },
+
+            plugins: {
+                legend: {
+                    labels: {
+                        color: "#1E3A5F",
+                        font: {
+                            size: 13,
+                            weight: "bold"
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: "#1E3A5F",
+                    titleColor: "#fff",
+                    bodyColor: "#fff",
+                    padding: 10,
+                    cornerRadius: 8
+                }
+            },
+
             scales: {
-                x: { title: { display: true, text: 'Tiempo' } },
-                y: { title: { display: true, text: 'Infectados' } }
+                x: {
+                    grid: {
+                        color: "rgba(0,0,0,0.05)"
+                    },
+                    ticks: {
+                        color: "#555"
+                    }
+                },
+                y: {
+                    grid: {
+                        color: "rgba(0,0,0,0.05)"
+                    },
+                    ticks: {
+                        color: "#555"
+                    }
+                }
+            },
+
+            onHover: (event, elements) => {
+                if (elements.length > 0) {
+                    const index = elements[0].index;
+
+                    document.getElementById("tiempo").innerText = t[index].toFixed(2);
+                    document.getElementById("val_analitica").innerText = analitica[index].toFixed(2);
+                    document.getElementById("val_numerica").innerText = numerica[index].toFixed(2);
+                }
             }
         }
     });
 }
+
+function mostrarModal(titulo, mensaje) {
+    const modal = document.getElementById("modal");
+    const title = document.getElementById("modalTitle");
+    const text = document.getElementById("modalText");
+
+    title.innerText = titulo;
+    text.innerText = mensaje;
+
+    modal.style.display = "block";
+}
+
+// Esperar a que cargue el DOM
+document.addEventListener("DOMContentLoaded", () => {
+
+    const modal = document.getElementById("modal");
+    const closeBtn = document.getElementById("closeModal");
+
+    // Cerrar con botón X
+    closeBtn.onclick = () => {
+        modal.style.display = "none";
+    };
+
+    // Cerrar haciendo clic fuera
+    window.onclick = (e) => {
+        if (e.target === modal) {
+            modal.style.display = "none";
+        }
+    };
+
+    //  MOSTRAR SIEMPRE AL RECARGAR
+    mostrarModal(
+    "  Protocolo de Emergencia ",
+    "Se ha detectado un nuevo agente patógeno de alta transmisibilidad.\n\n" +
+    "El sistema de simulación epidemiológica ha sido habilitado para analizar escenarios de propagación.\n\n" +
+    " Parámetros requeridos:\n" +
+    "• I₀ → Casos iniciales detectados\n" +
+    "• β → Tasa de propagación (nivel de contagio)\n" +
+    "• Tiempo → Horizonte de análisis en días\n\n" +
+    "⚠️ Tu objetivo es evaluar el comportamiento del brote y anticipar riesgos.\n\n" +
+    "Cada decisión puede ser crucial para contener la propagación."
+    );
+});

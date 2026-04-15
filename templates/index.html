@@ -8,39 +8,78 @@
 </head>
 <body>
 
-<div class="main-container">
+<div class="app-container">
 
-    <h1> Simulación de Propagación de Virus</h1>
-    <p class="subtitle">Modelo basado en ecuaciones diferenciales</p>
+    <header class="header">
+        <h1> Sistema de Simulación Epidemiológica</h1>
+        <p>Monitoreo y análisis del crecimiento de contagios</p>
+    </header>
 
-    <div class="card">
+    <main class="dashboard">
 
-        <div class="form-group">
-            <label>Infectados iniciales (I₀)</label>
-            <input type="number" id="I0" value="10">
-        </div>
+        <!-- PANEL IZQUIERDO -->
+        <section class="panel control-panel">
 
-        <div class="form-group">
-            <label>Tasa de contagio (β)</label>
-            <input type="number" step="0.01" id="beta" value="0.2">
-        </div>
+            <h2>Parámetros</h2>
 
-        <div class="form-group">
-            <label>Tiempo de simulación</label>
-            <input type="number" id="t_max" value="50">
-        </div>
+            <div class="form-group">
+                <label>Infectados iniciales</label>
+                <input type="number" id="I0" value="10">
+            </div>
 
-        <button onclick="simular()">Simular</button>
+            <div class="form-group">
+                <label>Tasa de contagio (β)</label>
+                <input type="number" step="0.01" id="beta" value="0.2">
+            </div>
 
-    </div>
+            <div class="form-group">
+                <label>Tiempo (días)</label>
+                <input type="number" id="t_max" value="10">
+            </div>
 
-    <div class="chart-card">
-        <canvas id="grafica"></canvas>
-    </div>
+            <button onclick="simular()">Simular</button>
+
+        </section>
+
+        <!-- CENTRO (GRÁFICA) -->
+        <section class="panel chart-panel">
+            <canvas id="grafica"></canvas>
+        </section>
+
+        <!-- DERECHA (DATOS) -->
+        <section class="panel info-panel">
+
+            <h2 class="info-title">Datos en tiempo real</h2>
+
+            <div class="info-item">
+                <span class="label">⏱ Tiempo</span>
+                <span class="value" id="tiempo">-</span>
+            </div>
+
+            <div class="info-item">
+                <span class="label">📈 Analítica</span>
+                <span class="value" id="val_analitica">-</span>
+            </div>
+
+            <div class="info-item">
+                <span class="label">🔢 Numérica</span>
+                <span class="value" id="val_numerica">-</span>
+            </div>
+
+        </section>
+
+    </main>
 
 </div>
 
-<script src="/static/script.js"></script>
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <span id="closeModal">&times;</span>
+        <h2 id="modalTitle"></h2>
+        <p id="modalText"></p>
+    </div>
+</div>
 
+<script src="/static/script.js"></script>
 </body>
 </html>
