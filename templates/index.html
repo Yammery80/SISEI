@@ -17,19 +17,31 @@
     <main class="dashboard">
         <section class="panel control-panel">
             <h2>Parámetros</h2>
+
             <div class="form-group">
                 <label>Infectados iniciales</label>
                 <input type="number" id="I0" value="10" min="0">
             </div>
+
             <div class="form-group">
                 <label>Tasa de contagio (β)</label>
                 <input type="number" step="0.01" id="beta" value="0.2" min="0">
             </div>
+
             <div class="form-group">
                 <label>Tiempo (días)</label>
                 <input type="number" id="t_max" value="10" min="1">
             </div>
-            <button onclick="simular()">Simular</button>
+
+            <div class="container" onclick="simular()">
+                <a href="#" id="simularBtn" class="button type--C">
+                    <div class="button__line"></div>
+                    <div class="button__line"></div>
+                    <span class="button__text">SIMULAR</span>
+                    <div class="button__drow1"></div>
+                    <div class="button__drow2"></div>
+                </a>
+            </div>
         </section>
 
         <section class="panel chart-panel">
