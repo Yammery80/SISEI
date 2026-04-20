@@ -1,0 +1,243 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: 
+        linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+        url('/static/img/fondo.jpeg') no-repeat center center fixed;
+    background-size: cover;
+    background-position: center;
+}
+
+/* HEADER */
+.header {
+    text-align: center;
+    padding: 20px;
+    color: white;
+}
+
+/* GRID PRINCIPAL */
+.dashboard {
+    display: grid;
+    grid-template-columns: 300px 1fr 250px;
+    gap: 20px;
+    padding: 20px;
+}
+
+/* PANEL GENERAL */
+.panel {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease;
+}
+.panel h2 {
+    margin-top: 0;
+    color: #1E3A5F;
+}
+
+.panel:hover {
+    transform: translateY(-5px);
+}
+
+/* FORMULARIO */
+.form-group {
+    margin-bottom: 15px;
+}
+
+input {
+    width: 90%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #01105a;
+}
+
+
+/* GRÁFICA */
+.chart-panel {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    height: 400px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+/* INFO */
+.info-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.info-title {
+    margin-bottom: 20px;
+    color: #1E3A5F;
+}
+
+/* Cada fila */
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #F4F7FB;
+    padding: 12px 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    transition: 0.3s ease;
+}
+
+/* Hover elegante */
+.info-item:hover {
+    transform: translateX(5px);
+    background: #EAF2FB;
+}
+
+/* Etiquetas */
+.label {
+    font-weight: 500;
+    color: #555;
+}
+
+/* Valores dinámicos */
+.value {
+    font-weight: bold;
+    color: #2A7FBA;
+    font-size: 16px;
+}
+
+/* ANIMACIÓN ENTRADA */
+.panel {
+    animation: fadeIn 0.6s ease;
+}
+
+
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+}
+.modal-content {
+    background: white;
+    color: #333;
+    margin: 10% auto;
+    padding: 25px;
+    width: 420px;
+    border-radius: 15px;
+    text-align: left;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    animation: modalFade 0.4s ease;
+    text-align: justify;
+}
+
+.modal-content h2 {
+    margin-top: 0;
+    color: #1E3A5F;
+    text-align: center;
+}
+
+.modal-content p {
+    margin: 25px;
+    line-height: 1.5;
+    white-space: pre-line;
+}
+
+@keyframes modalFade {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+#closeModal {
+    float: right;
+    cursor: pointer;
+    font-size: 22px;
+    color: #888;
+    transition: 0.3s;
+}
+
+#closeModal:hover {
+    color: #e74c3c;
+    transform: scale(1.2);
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #021c49, #1e3c72);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Hover (cuando pasas el mouse) */
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+/* Click (efecto presionado) */
+button:active {
+    transform: scale(0.95);
+}
+
+/* Efecto brillo animado */
+button::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: 0.5s;
+}
+
+button:hover::after {
+    left: 100%;
+}
+
+button.loading {
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+button.loading::before {
+    content: "";
+    width: 18px;
+    height: 18px;
+    border: 3px solid white;
+    border-top: 3px solid transparent;
+    border-radius: 50%;
+    display: inline-block;
+    animation: spin 1s linear infinite;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
