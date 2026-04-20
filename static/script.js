@@ -1,7 +1,8 @@
 let chart;
 
 function simular() {
-    const boton = document.querySelector("button");
+    const botton = document.querySelector("#simularBtn");
+    const textButton = botton.querySelector(".button__text");
 
     const I0 = parseFloat(document.getElementById("I0").value);
     const beta = parseFloat(document.getElementById("beta").value);
@@ -13,8 +14,10 @@ function simular() {
     }
 
     // AQUÍ VA (cuando inicia la simulación)
-    boton.classList.add("loading");
-    boton.innerText = " Simulando...";
+    botton.classList.add("loading");
+    if (textButton) {
+        textButton.innerText = "Simulando...";
+    }
 
     fetch('/simular', {
         method: 'POST',
@@ -54,8 +57,10 @@ function simular() {
     })
     .finally(() => {
         //  AQUÍ SE QUITA cuando termina
-        boton.classList.remove("loading");
-        boton.innerText = "Simular";
+        botton.classList.remove("loading");
+        if (textButton) {
+            textButton.innerText = "SIMULAR";
+        }
     });
 }
 
@@ -198,3 +203,24 @@ document.addEventListener("DOMContentLoaded", () => {
     "Cada decisión puede ser crucial para contener la propagación."
     );
 });
+
+const container = document.getElementById('data-container');
+
+async function cargarSimulacion() {
+
+  try {
+    // Simular el cálculo matemático (2 segundos)
+    const resultados = await miModeloMatematico.ejecutar();
+
+    // 2. Reemplazar el skeleton con los datos reales
+    container.innerHTML = `
+      <div class="real-card">
+        <img src="icon-analitica.png" />
+        <span>Analítica</span>
+        <span class="value">${resultados.valor}</span>
+      </div>
+    `;
+  } catch (error) {
+    console.error("Error en la simulación", error);
+  }
+}
