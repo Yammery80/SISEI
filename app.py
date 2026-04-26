@@ -12,7 +12,6 @@ def index():
 def simular():
     try:
         data = request.json
-        # Usamos .get() con un valor por defecto para evitar que truene si falta un dato
         I0 = float(data.get('i0', 10))
         beta = float(data.get('beta', 0.2))
         t_max = float(data.get('tiempo', 10))

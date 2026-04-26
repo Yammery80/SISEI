@@ -37,6 +37,7 @@ async function simular() {
         });
 
         const data = await response.json();
+        datosGlobales = data;
         
         const t = data.t || data.puntos_x;
         const analitica = data.analitica || data.puntos_y;
@@ -65,6 +66,30 @@ async function simular() {
     } finally {
         if (botton) botton.classList.remove("loading");
         if (textButton) textButton.innerText = "SIMULAR";
+    }
+
+    try {
+        const url = (ciudad && ciudad !== "Ninguna" && ciudad !== "-") ? '/simular/ciudad' : '/simular';
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                i0: I0, beta: beta, tiempo: t_max,
+                factor_cuarentena: factor, ciudad: ciudad
+            })
+        });
+
+        const data = await response.json();
+        datosGlobales = data;
+
+        ejecutarRenderizadoSegunVista(vistaActual);
+        
+        const final = (data.analitica || data.puntos_y).slice(-1)[0];
+        procesarAlertas(final);
+
+    } catch (err) {
+        console.error("Error:", err);
+    } finally {
     }
 }
 
@@ -149,10 +174,45 @@ function graficar(t, analitica, numerica, tipo) {
 
     chart = new Chart(ctx, {
         type: 'line',
-        data: { labels: t, datasets: datasets },
+        data: { labels: t.map(val => Math.round(val)),
+            datasets: datasets },
         options: {
             responsive: true,
             maintainAspectRatio: false,
+           scales: {
+            x: {
+                ticks: {
+                    maxTicksLimit: 10, 
+                    callback: function(value, index, ticks) {
+                        return 'Día ' + this.getLabelForValue(value);
+                    }
+                },
+                grid: {
+                    display: false
+                }
+            },
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: (value) => value.toLocaleString()
+                }
+            }
+        },
+       interaction: { mode: 'index', intersect: false },
+            plugins: {
+                tooltip: {
+                    enabled: true,
+                    callbacks: {
+                        label: function(context) {
+                            // ACTUALIZAR MÉTRICAS DEL PUNTO AL PASAR EL MOUSE
+                            document.getElementById('tiempo').innerText = context.label + " días";
+                            document.getElementById('val_analitica').innerText = Math.round(context.parsed.y).toLocaleString();
+                            return `Casos: ${Math.round(context.parsed.y).toLocaleString()}`;
+                        }
+                    }
+                }
+            },
+            },
             layout: {
             padding: {
                 top: 10,
@@ -165,7 +225,7 @@ function graficar(t, analitica, numerica, tipo) {
             }
         }
     }
-    });
+    );
 }
 
 
