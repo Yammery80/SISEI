@@ -1,33 +1,36 @@
+/* ==========================================================================
+   1. VARIABLES Y CONFIGURACIÓN GLOBAL
+   ========================================================================== */
 body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
-    background: 
-        linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
-        url('/static/img/fondo.jpeg') no-repeat center center fixed;
+    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+                url('/static/img/fondo.jpeg') no-repeat center center fixed;
     background-size: cover;
     background-position: center;
 }
 
-/* HEADER */
+/* ==========================================================================
+   2. ESTRUCTURA Y LAYOUT (GRID PRINCIPAL)
+   ========================================================================== */
 .header {
     text-align: center;
     padding: 20px;
     color: white;
 }
 
-/* GRID PRINCIPAL */
 .dashboard {
     display: grid;
-    grid-template-columns: 300px 1fr 250px;
+    grid-template-columns: 300px minmax(0, 1fr) 250px;
     gap: 20px;
     padding: 20px;
+    box-sizing: border-box;
 }
 
 .search_container {
    padding: 20px;
 }
 
-/* PANEL GENERAL */
 .panel {
     background: white;
     border-radius: 15px;
@@ -36,6 +39,7 @@ body {
     transition: transform 0.3s ease;
     animation: fadeIn 0.6s ease;
 }
+
 .panel h2 {
     margin-top: 0;
     color: #1E3A5F;
@@ -45,7 +49,23 @@ body {
     transform: translateY(-5px);
 }
 
-/* FORMULARIO */
+.chart-panel {
+    position: relative;
+    justify-content: center;
+    display:flex;
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    height: 400px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    z-index:99;
+    min-width: 0; 
+    overflow: hidden;
+}
+
+/* ==========================================================================
+   3. FORMULARIOS E INPUTS
+   ========================================================================== */
 .form-group {
     margin-bottom: 15px;
 }
@@ -57,14 +77,6 @@ input {
     border: 1px solid #01105a;
 }
 
-/* GRÁFICA */
-.chart-panel {
-    background: white;
-    border-radius: 15px;
-    padding: 20px;
-    height: 400px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-}
 
 /* INFO */
 .info-panel {
@@ -395,3 +407,317 @@ input:hover {
   width: 1rem;
   height: 1rem;
 }
+
+
+.form-group .label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  height: -moz-fit-content;
+  height: fit-content;
+}
+.form-group .label:has(input:focus) .title {
+  top: 0;
+  left: 0;
+  color: #1E3A5F;
+}
+.form-group .label .title {
+  padding: 0 10px;
+  transition: all 300ms;
+  font-size: 12px;
+  color: black;
+  font-weight: 600;
+  width: -moz-fit-content;
+  width: fit-content;
+  top: 14px;
+  position: relative;
+  left: 15px;
+  background: white;
+}
+.form-group .input-field {
+  width: auto;
+  height: 50px;
+  text-indent: 15px;
+  border-radius: 15px;
+  outline: none;
+  background-color: transparent;
+  border: 1px solid #21262e;
+  transition: all 0.3s;
+  caret-color: #1E3A5F;
+  color: #090808;
+}
+
+.form-group .input-field:hover {
+  border-color: rgba(209, 121, 66, 0.5);
+}
+
+.form-group .input-field:focus {
+  border-color: #1E3A5F;
+}
+
+/* Heredamos la estructura de tu .label */
+.form-group .label:has(select:focus) .title {
+  top: 0;
+  left: 0;
+  color: #1E3A5F;
+}
+
+/* Estilo específico para el select para que parezca un input-field */
+.form-group select.input-field {
+  appearance: none; /* Quita la flecha por defecto del navegador */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%231E3A5F' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: calc(100% - 15px) center; /* Coloca la flecha a la derecha */
+  padding-right: 40px;
+  cursor: pointer;
+  width: 100%; /* Para que ocupe el mismo ancho que los otros inputs */
+}
+
+/* Estilos para las opciones dentro del select */
+.form-group select.input-field option {
+  background-color: white;
+  color: #090808;
+  padding: 10px;
+}
+
+/* Mantenemos la consistencia del hover y focus que ya tienes */
+.form-group select.input-field:hover {
+  border-color: rgba(209, 121, 66, 0.5);
+}
+
+.form-group select.input-field:focus {
+  border-color: #1E3A5F;
+}
+
+#citiesList {
+    display: none;
+}
+
+
+@keyframes square-animation {
+ 0% {
+  left: 0;
+  top: 0;
+ }
+
+ 10.5% {
+  left: 0;
+  top: 0;
+ }
+
+ 12.5% {
+  left: 32px;
+  top: 0;
+ }
+
+ 23% {
+  left: 32px;
+  top: 0;
+ }
+
+ 25% {
+  left: 64px;
+  top: 0;
+ }
+
+ 35.5% {
+  left: 64px;
+  top: 0;
+ }
+
+ 37.5% {
+  left: 64px;
+  top: 32px;
+ }
+
+ 48% {
+  left: 64px;
+  top: 32px;
+ }
+
+ 50% {
+  left: 32px;
+  top: 32px;
+ }
+
+ 60.5% {
+  left: 32px;
+  top: 32px;
+ }
+
+ 62.5% {
+  left: 32px;
+  top: 64px;
+ }
+
+ 73% {
+  left: 32px;
+  top: 64px;
+ }
+
+ 75% {
+  left: 0;
+  top: 64px;
+ }
+
+ 85.5% {
+  left: 0;
+  top: 64px;
+ }
+
+ 87.5% {
+  left: 0;
+  top: 32px;
+ }
+
+ 98% {
+  left: 0;
+  top: 32px;
+ }
+
+ 100% {
+  left: 0;
+  top: 0;
+ }
+}
+
+.loader {
+ position: absolute;
+ top: 45%;
+ left: 45%;
+ width: 96px;
+ height: 96px;
+ transform:rotate(45deg);
+ z-index: 100;
+ pointer-events: none;
+}
+
+.loader-square {
+ position: absolute;
+ top: 0;
+ left: 0;
+ width: 28px;
+ height: 28px;
+ margin: 2px;
+ border-radius: 0px;
+ background: #1E3A5F;
+ background-size: cover;
+ background-position: center;
+ background-attachment: fixed;
+ animation: square-animation 10s ease-in-out infinite both;
+}
+
+.loader-square:nth-of-type(0) {
+ animation-delay: 0s;
+}
+
+.loader-square:nth-of-type(1) {
+ animation-delay: -1.4285714286s;
+}
+
+.loader-square:nth-of-type(2) {
+ animation-delay: -2.8571428571s;
+}
+
+.loader-square:nth-of-type(3) {
+ animation-delay: -4.2857142857s;
+}
+
+.loader-square:nth-of-type(4) {
+ animation-delay: -5.7142857143s;
+}
+
+.loader-square:nth-of-type(5) {
+ animation-delay: -7.1428571429s;
+}
+
+.loader-square:nth-of-type(6) {
+ animation-delay: -8.5714285714s;
+}
+
+.loader-square:nth-of-type(7) {
+ animation-delay: -10s;
+}
+
+/* From Uiverse.io by JulanDeAlb */ 
+.hamburger {
+  cursor: pointer;
+  z-index:99;
+}
+
+.hamburger input {
+  display: none;
+}
+
+.hamburger svg {
+  /* The size of the SVG defines the overall size */
+  height: 3em;
+  /* Define the transition for transforming the SVG */
+  transition: transform 600ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.line {
+  fill: none;
+  stroke: black;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 3;
+  /* Define the transition for transforming the Stroke */
+  transition: stroke-dasharray 600ms cubic-bezier(0.4, 0, 0.2, 1),
+              stroke-dashoffset 600ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.line-top-bottom {
+  stroke-dasharray: 12 63;
+}
+
+.hamburger input:checked + svg {
+  transform: rotate(-45deg);
+}
+
+.hamburger input:checked + svg .line-top-bottom {
+  stroke-dasharray: 20 300;
+  stroke-dashoffset: -32.42;
+}
+
+/* Ocultar el panel por defecto */
+.chart-controls {
+    display: none; 
+    position: absolute;
+    right: 60px; /* Se despliega a la izquierda de la hamburguesa */
+    top: 0;
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    width: 180px;
+    z-index: 98;
+}
+
+/* Mostrar el panel SOLO cuando el checkbox está marcado */
+.hamburger input:checked ~ .chart-controls {
+    display: block;
+    animation: fadeIn 0.3s ease forwards;
+}
+
+/* Estilo para los botones dentro del menú */
+.view-btn {
+    width: 100%;
+    padding: 8px;
+    margin: 4px 0;
+    font-size: 13px;
+    background: #f4f7fb;
+    color: #1E3A5F;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.view-btn:hover {
+    background: #1E3A5F;
+    color: white;
+}
+

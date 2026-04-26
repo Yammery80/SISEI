@@ -10,37 +10,34 @@ def index():
 
 @app.route('/simular', methods=['POST'])
 def simular():
-    data = request.json
+    try:
+        data = request.json
+        # Usamos .get() con un valor por defecto para evitar que truene si falta un dato
+        I0 = float(data.get('i0', 10))
+        beta = float(data.get('beta', 0.2))
+        t_max = float(data.get('tiempo', 10))
 
-    # Aseguramos que I0 y beta no sean negativos desde la entrada
-    I0 = max(0.0, float(data['I0']))
-    beta = max(0.0, float(data['beta'])) # <--- Corrección aquí
-    t_max = float(data['t_max'])
+        # Tiempo
+        t = np.linspace(0, t_max, 100)
 
-    # Generación de tiempo
-    t = np.linspace(0, t_max, 100)
+        # SOLUCIÓN ANALÍTICA (Exponencial básica)
+        I_analitica = I0 * np.exp(beta * t)
 
-    # -------- SOLUCIÓN ANALÍTICA --------
-    I_analitica = np.maximum(0, I0 * np.exp(beta * t))
+        # SOLUCIÓN NUMÉRICA (EULER)
+        dt = t[1] - t[0]
+        I_numerica = [I0]
+        for i in range(len(t)-1):
+            nuevo = I_numerica[i] + beta * I_numerica[i] * dt
+            I_numerica.append(nuevo)
 
-    # -------- SOLUCIÓN NUMÉRICA (EULER) --------
-    dt = t[1] - t[0]
-    I_numerica = [I0]
-
-    for i in range(len(t)-1):
-        nuevo = I_numerica[i] + beta * I_numerica[i] * dt
-        
-        # RESTRICCIÓN: Solo valores positivos (mínimo 0)
-        if nuevo < 0:
-            nuevo = 0
-            
-        I_numerica.append(nuevo)
-
-    return jsonify({
-        "t": t.tolist(),
-        "analitica": I_analitica.tolist(),
-        "numerica": I_numerica
-    })
+        return jsonify({
+            "t": t.tolist(),
+            "analitica": I_analitica.tolist(),
+            "numerica": I_numerica
+        })
+    except Exception as e:
+        print(f"Error en /simular: {e}")
+        return jsonify({"error": str(e)}), 500
     
 def obtener_datos_ciudad(nombre_ciudad):
     api_url = f"https://api.api-ninjas.com/v1/city?name={nombre_ciudad}"
@@ -74,9 +71,12 @@ def simular_ciudad():
     data = request.json
     nombre_ciudad = data.get('ciudad')
     
-    r = float(data.get('tasa_r', 0.5))    # Tasa de contagio
+    r_base = float(data.get('beta', 0.2))
+    factor_cuarentena = float(data.get('factor_cuarentena', 1.0))
     t_final = int(data.get('tiempo', 30)) # Días a simular
     i0 = float(data.get('i0', 1))         # Infectados iniciales
+    
+    r_final = r_base * factor_cuarentena
     
     poblacion_k= obtener_datos_ciudad(nombre_ciudad)
     
@@ -86,7 +86,7 @@ def simular_ciudad():
     
         C = (poblacion_k -i0)/i0
     
-        infectados_y = poblacion_k / (1 + C * np.exp(-r * t_espacio))
+        infectados_y = poblacion_k / (1 + C * np.exp(-r_final * t_espacio))
     
         return jsonify({
             "status": "success",
@@ -131,5 +131,8 @@ def simular_variable():
             "puntos_y": infectados,
             "tasa_visual": tasa_variable.tolist()
         })
+        
+
+  
 if __name__ == '__main__':
     app.run(debug=True)
