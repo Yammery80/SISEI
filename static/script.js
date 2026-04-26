@@ -224,3 +224,54 @@ async function cargarSimulacion() {
     console.error("Error en la simulación", error);
   }
 }
+document.getElementById('searchBtn').addEventListener('click', async () => {
+    const ciudadNombre = document.getElementById('cityInput').value;
+
+    if (!ciudadNombre) {
+        alert("Escribe el nombre de una ciudad");
+        return;
+    }
+
+    try {
+        // 1. Llamada a tu API de Flask
+        const response = await fetch(`/api/buscar_ciudad?nombre=${encodeURIComponent(ciudadNombre)}`);
+        
+        // --- VALIDACIÓN CRÍTICA ---
+        // Si el servidor responde 404 o 500, no intentamos parsear JSON
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({})); 
+            alert(errorData.error || "No se encontró la ciudad en la base de datos.");
+            return;
+        }
+
+        const data = await response.json();
+
+        // 2. Transferencia automática e inmediata al input I0
+        const inputI0 = document.getElementById('I0');
+        if (inputI0) {
+            inputI0.value = data.poblacion;
+            
+            // Efecto visual de "flash" para indicar que el valor cambió
+            inputI0.style.transition = "background-color 0.3s";
+            inputI0.style.backgroundColor = "#d4edda"; 
+            setTimeout(() => inputI0.style.backgroundColor = "white", 500);
+        }
+
+        // 3. Actualizamos los textos visuales
+        const nameElem = document.getElementById('cityName');
+        const popElem = document.getElementById('cityPop');
+        
+        if (nameElem) nameElem.innerText = data.nombre;
+        if (popElem) popElem.innerText = data.poblacion.toLocaleString();
+
+        // 4. DISPARO AUTOMÁTICO DE LA SIMULACIÓN
+        // Asegúrate de que la función simular() esté definida en tu script
+        if (typeof simular === "function") {
+            simular();
+        }
+
+    } catch (error) {
+        console.error("Error detectado:", error);
+        alert("Error crítico: El servidor no envió una respuesta válida.");
+    }
+});
