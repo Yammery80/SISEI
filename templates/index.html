@@ -10,9 +10,8 @@
 
 <div class="app-container">
 
-
     <header class="header">
-        <h1> Sistema de Simulación Epidemiológica</h1>
+        <h1>Sistema de Simulación Epidemiológica</h1>
         <p>Monitoreo y análisis del crecimiento de contagios</p>
     </header>
 
@@ -35,30 +34,27 @@
 
 
     <main class="dashboard">
-
-        <!-- PANEL IZQUIERDO -->
         <section class="panel control-panel">
 
             <p style="font-size: 0.8rem; margin-top: 5px; color: #555;">
         Ciudad: <span id="cityName">Ninguna</span> | 
         Pob: <span id="cityPop">-</span>
     </p>
-
             <h2>Parámetros</h2>
 
             <div class="form-group">
-                <label>Infectados iniciales </label>
-                <input type="number" id="I0" value="10">
+                <label>Infectados iniciales</label>
+                <input type="number" id="I0" value="10" min="0">
             </div>
 
             <div class="form-group">
                 <label>Tasa de contagio (β)</label>
-                <input type="number" step="0.01" id="beta" value="0.2">
+                <input type="number" step="0.01" id="beta" value="0.2" min="0">
             </div>
 
             <div class="form-group">
                 <label>Tiempo (días)</label>
-                <input type="number" id="t_max" value="10">
+                <input type="number" id="t_max" value="10" min="1">
             </div>
 
             <div class="container" onclick="simular()">
@@ -66,40 +62,32 @@
                     <div class="button__line"></div>
                     <div class="button__line"></div>
                     <span class="button__text">SIMULAR</span>
+                    <div class="button__drow1"></div>
+                    <div class="button__drow2"></div>
                 </a>
             </div>
-
         </section>
 
-        <!-- CENTRO (GRÁFICA) -->
         <section class="panel chart-panel">
             <canvas id="grafica"></canvas>
         </section>
 
-        <!-- DERECHA (DATOS) -->
         <section class="panel info-panel">
-
             <h2 class="info-title">Datos en tiempo real</h2>
-
             <div class="info-item">
                 <span class="label">⏱ Tiempo</span>
                 <span class="value" id="tiempo">-</span>
             </div>
-
             <div class="info-item">
                 <span class="label">📈 Analítica</span>
                 <span class="value" id="val_analitica">-</span>
             </div>
-
             <div class="info-item">
                 <span class="label">🔢 Numérica</span>
                 <span class="value" id="val_numerica">-</span>
             </div>
-
         </section>
-
     </main>
-
 </div>
 
 <div id="modal" class="modal">

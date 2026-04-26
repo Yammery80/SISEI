@@ -1,23 +1,23 @@
 let chart;
 
 function simular() {
+    // Seleccionamos el botón animado y su texto interno
     const botton = document.querySelector("#simularBtn");
-    const textButton = botton.querySelector(".button__text");
+    const textButton = botton ? botton.querySelector(".button__text") : null;
 
     const I0 = parseFloat(document.getElementById("I0").value);
     const beta = parseFloat(document.getElementById("beta").value);
     const t_max = parseFloat(document.getElementById("t_max").value);
 
-    if (I0 <= 0 || t_max <= 0) {
-        alert("Ingrese valores válidos");
+    // Validación de entrada
+    if (isNaN(I0) || isNaN(beta) || isNaN(t_max) || I0 <= 0 || t_max <= 0) {
+        alert("Por favor, ingrese valores válidos mayores a cero.");
         return;
     }
 
-    // AQUÍ VA (cuando inicia la simulación)
-    botton.classList.add("loading");
-    if (textButton) {
-        textButton.innerText = "Simulando...";
-    }
+    // Iniciamos estado de carga
+    if (botton) botton.classList.add("loading");
+    if (textButton) textButton.innerText = "Simulando...";
 
     fetch('/simular', {
         method: 'POST',
@@ -29,47 +29,54 @@ function simular() {
         graficar(data.t, data.analitica, data.numerica);
         const final = data.analitica[data.analitica.length - 1];
 
+        // Lógica de Modales con Clases de Color y Alertas
         if (final > 10000) {
             mostrarModal(
-            "🚨 Nivel Crítico de Propagación🚨",
-            "El modelo indica un crecimiento exponencial fuera de control.\n\n" +
-            " La tasa de contagio ha superado los niveles seguros.\n" +
-            " El sistema sanitario podría colapsar en poco tiempo.\n\n" +
-            "Se recomienda activar protocolos de contención inmediata y medidas de emergencia."
+                "🚨 NIVEL CRÍTICO: EXTERMINIO 🚨",
+                "EL MODELO INDICA UN COLAPSO TOTAL.\n\n" +
+                "⚠️ ALERTA: EXTERMINIO DE LA POBLACIÓN DETECTADO.\n" +
+                "Iniciando protocolo de limpieza de la ciudad en 5 minutos.\n\n" +
+                "No hay sobrevivientes estimados. Dios nos guarde.",
+                "modal-rojo"
             );
         } 
         else if (final > 1000) {
             mostrarModal(
-            "⚠️ Riesgo Elevado de Expansión",
-            "La propagación del virus muestra una tendencia acelerada.\n\n" +
-            " El brote aún puede ser contenido, pero el margen de acción es limitado.\n\n" +
-            "Se recomienda intensificar medidas preventivas y monitoreo continuo."
+                "⚠️ Riesgo Elevado de Expansión",
+                "La propagación del virus muestra una tendencia acelerada.\n\n" +
+                "El brote aún puede ser contenido, pero el margen de acción es limitado.\n\n" +
+                "Se recomienda intensificar medidas preventivas y monitoreo continuo.",
+                "modal-amarillo"
             );
         } 
         else {
             mostrarModal(
-            "🟢 Propagación Bajo Control",
-            "El crecimiento del virus se mantiene dentro de parámetros manejables.\n\n" +
-            " Existe una ventana de oportunidad para desarrollar soluciones.\n\n" +
-            "Sin embargo, se recomienda vigilancia constante para evitar cambios inesperados."
+                "🟢 Propagación Bajo Control",
+                "El crecimiento del virus se mantiene dentro de parámetros manejables.\n\n" +
+                "Existe una ventana de oportunidad para desarrollar soluciones.\n\n" +
+                "Sin embargo, se recomienda vigilancia constante para evitar cambios inesperados.",
+                "modal-verde"
             );
         }
     })
+    .catch(err => {
+        console.error("Error en la petición:", err);
+        alert("Error al conectar con el servidor.");
+    })
     .finally(() => {
-        //  AQUÍ SE QUITA cuando termina
-        botton.classList.remove("loading");
-        if (textButton) {
-            textButton.innerText = "SIMULAR";
-        }
+        // Quitamos estado de carga
+        if (botton) botton.classList.remove("loading");
+        if (textButton) textButton.innerText = "SIMULAR";
     });
 }
 
 function graficar(t, analitica, numerica) {
-    const ctx = document.getElementById('grafica').getContext('2d');
-
+    const canvas = document.getElementById('grafica');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    
     if (chart) chart.destroy();
 
-    // Gradiente azul elegante
     const gradient = ctx.createLinearGradient(0, 0, 0, 400);
     gradient.addColorStop(0, "rgba(42, 127, 186, 0.4)");
     gradient.addColorStop(1, "rgba(42, 127, 186, 0)");
@@ -85,7 +92,7 @@ function graficar(t, analitica, numerica) {
                     borderColor: "#2A7FBA",
                     backgroundColor: gradient,
                     fill: true,
-                    tension: 0.4, // curva suave
+                    tension: 0.4,
                     pointRadius: 0,
                     borderWidth: 3
                 },
@@ -93,7 +100,7 @@ function graficar(t, analitica, numerica) {
                     label: 'Modelo Numérico',
                     data: numerica,
                     borderColor: "#1E3A5F",
-                    borderDash: [6, 4], // línea discontinua elegante
+                    borderDash: [6, 4],
                     tension: 0.4,
                     pointRadius: 0,
                     borderWidth: 2,
@@ -104,54 +111,13 @@ function graficar(t, analitica, numerica) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-
-            interaction: {
-                mode: 'nearest',
-                intersect: false
-            },
-
+            interaction: { mode: 'nearest', intersect: false },
             plugins: {
-                legend: {
-                    labels: {
-                        color: "#1E3A5F",
-                        font: {
-                            size: 13,
-                            weight: "bold"
-                        }
-                    }
-                },
-                tooltip: {
-                    backgroundColor: "#1E3A5F",
-                    titleColor: "#fff",
-                    bodyColor: "#fff",
-                    padding: 10,
-                    cornerRadius: 8
-                }
+                legend: { labels: { color: "#1E3A5F", font: { size: 13, weight: "bold" } } }
             },
-
-            scales: {
-                x: {
-                    grid: {
-                        color: "rgba(0,0,0,0.05)"
-                    },
-                    ticks: {
-                        color: "#555"
-                    }
-                },
-                y: {
-                    grid: {
-                        color: "rgba(0,0,0,0.05)"
-                    },
-                    ticks: {
-                        color: "#555"
-                    }
-                }
-            },
-
             onHover: (event, elements) => {
                 if (elements.length > 0) {
                     const index = elements[0].index;
-
                     document.getElementById("tiempo").innerText = t[index].toFixed(2);
                     document.getElementById("val_analitica").innerText = analitica[index].toFixed(2);
                     document.getElementById("val_numerica").innerText = numerica[index].toFixed(2);
@@ -161,69 +127,41 @@ function graficar(t, analitica, numerica) {
     });
 }
 
-function mostrarModal(titulo, mensaje) {
+function mostrarModal(titulo, mensaje, claseColor = "") {
     const modal = document.getElementById("modal");
+    if (!modal) return;
+    const modalContent = modal.querySelector(".modal-content");
     const title = document.getElementById("modalTitle");
     const text = document.getElementById("modalText");
 
+    modalContent.classList.remove("modal-rojo", "modal-amarillo", "modal-verde");
+    if (claseColor) modalContent.classList.add(claseColor);
+
     title.innerText = titulo;
     text.innerText = mensaje;
-
     modal.style.display = "block";
 }
 
-// Esperar a que cargue el DOM
 document.addEventListener("DOMContentLoaded", () => {
-
     const modal = document.getElementById("modal");
     const closeBtn = document.getElementById("closeModal");
 
-    // Cerrar con botón X
-    closeBtn.onclick = () => {
-        modal.style.display = "none";
+    if (closeBtn) {
+        closeBtn.onclick = () => { modal.style.display = "none"; };
+    }
+    
+    window.onclick = (e) => { 
+        if (e.target === modal) modal.style.display = "none"; 
     };
 
-    // Cerrar haciendo clic fuera
-    window.onclick = (e) => {
-        if (e.target === modal) {
-            modal.style.display = "none";
-        }
-    };
-
-    //  MOSTRAR SIEMPRE AL RECARGAR
     mostrarModal(
-    "  Protocolo de Emergencia ",
-    "Se ha detectado un nuevo agente patógeno de alta transmisibilidad.\n\n" +
-    "El sistema de simulación epidemiológica ha sido habilitado para analizar escenarios de propagación.\n\n" +
-    " Parámetros requeridos:\n" +
-    "• I₀ → Casos iniciales detectados\n" +
-    "• β → Tasa de propagación (nivel de contagio)\n" +
-    "• Tiempo → Horizonte de análisis en días\n\n" +
-    "⚠️ Tu objetivo es evaluar el comportamiento del brote y anticipar riesgos.\n\n" +
-    "Cada decisión puede ser crucial para contener la propagación."
+        "Protocolo de Emergencia",
+        "Se ha detectado un nuevo agente patógeno de alta transmisibilidad.\n\n" +
+        "El sistema de simulación epidemiológica ha sido habilitado para analizar escenarios de propagación.\n\n" +
+        "⚠️ Tu objetivo es evaluar el comportamiento del brote y anticipar riesgos.",
+        "modal-verde"
     );
 });
-
-const container = document.getElementById('data-container');
-
-async function cargarSimulacion() {
-
-  try {
-    // Simular el cálculo matemático (2 segundos)
-    const resultados = await miModeloMatematico.ejecutar();
-
-    // 2. Reemplazar el skeleton con los datos reales
-    container.innerHTML = `
-      <div class="real-card">
-        <img src="icon-analitica.png" />
-        <span>Analítica</span>
-        <span class="value">${resultados.valor}</span>
-      </div>
-    `;
-  } catch (error) {
-    console.error("Error en la simulación", error);
-  }
-}
 document.getElementById('searchBtn').addEventListener('click', async () => {
     const ciudadNombre = document.getElementById('cityInput').value;
 
