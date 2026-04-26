@@ -113,7 +113,6 @@ const buscarCiudad = async () => {
         const data = await response.json();
 
         // Inyectar en I0 y actualizar etiquetas
-        document.getElementById('I0').value = data.poblacion;
         document.getElementById('cityName').innerText = data.nombre;
         document.getElementById('cityPop').innerText = data.poblacion.toLocaleString();
 
@@ -374,12 +373,12 @@ function cambiarVista(nuevaVista) {
 }
 
 function cambiarVista(tipo) {
-    const loader = document.getElementById('mainLoader');
-    loader.style.display = "block"; // Encender animación
+    const loaderElem = document.getElementById('mainLoader');
+    loaderElem.style.display = "block"; // Encender animación
 
     setTimeout(() => {
         // ... tu lógica de cambiar el gráfico ...
-        loader.style.display = "none"; // Apagar cuando termine el render
+        loaderElem.style.display = "none"; // Apagar cuando termine el render
         
         // Cerrar el menú hamburguesa automáticamente al elegir
         document.getElementById('menuToggle').checked = false;
@@ -389,8 +388,8 @@ function cambiarVista(tipo) {
 function cambiarVista(nuevaVista) {
     if (!datosGlobales) return;
     
-    const loader = document.getElementById('mainLoader');
-    loader.style.display = "block"; 
+    const loaderVista = document.getElementById('mainLoader');
+    loaderVista.style.display = "block"; 
     vistaActual = nuevaVista;
 
     setTimeout(() => {
@@ -474,7 +473,41 @@ function cambiarVista(nuevaVista) {
             }
         });
 
-        loader.style.display = "none";
+        loaderVista.style.display = "none";
         document.getElementById('menuToggle').checked = false;
     }, 600);
+
+    vistaActual = nuevaVista;
+    const loader = document.getElementById('mainLoader');
+    loader.style.display = "block";
+
+    setTimeout(() => {
+        ejecutarRenderizadoSegunVista(nuevaVista);
+        loader.style.display = "none";
+        document.getElementById('menuToggle').checked = false;
+    }, 400);
+}
+
+function ejecutarRenderizadoSegunVista(tipoVista) {
+    if (!datosGlobales) return;
+
+    const t = datosGlobales.t || datosGlobales.puntos_x;
+    const d = datosGlobales.analitica || datosGlobales.puntos_y;
+    const ciudad = document.getElementById('cityName').innerText;
+    
+    let capa = (ciudad !== "Ninguna") ? 'ciudad' : 'base';
+
+    if (tipoVista === 'incidencia') {
+        const diaria = d.map((v, i) => i === 0 ? v : v - d[i-1]);
+        graficar(t, diaria, 'cuarentena', 'linear', 'bar');
+    } 
+    else if (tipoVista === 'logaritmica') {
+        graficar(t, d, 'cuarentena', 'logarithmic', 'line');
+    }
+    else if (tipoVista === 'sir') {
+        graficar(t, d, 'cuarentena', 'linear', 'line');
+    }
+    else {
+        graficar(t, d, capa, 'linear', 'line');
+    }
 }
