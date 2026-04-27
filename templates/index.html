@@ -11,8 +11,7 @@
 <div class="app-container">
     <header class="header">
         <h1>Sistema de Simulación Epidemiológica</h1>
-        <p>Monitoreo y análisis del crecimiento de contagios</p>
-        <link rel="icon" href="data:,">
+        <p>Modelo de Variables Separables: dI/dt = kI</p>
     </header>
 
     <div class="search_container">
@@ -30,7 +29,7 @@
     <main class="dashboard">
         <section class="panel control-panel">
             <div class="city-info">
-                <span class="city-label">📍 Ciudad:</span> <span id="cityName">Ninguna</span>
+                        <span class="city-label">📍 Ciudad:</span> <span id="cityName">Ninguna</span>
                 <span class="city-label">👥 Pob:</span> <span id="cityPop">-</span>
             </div>
             
@@ -56,10 +55,9 @@
                     <input id="t_max" class="input-field" type="number" value="10" min="1" />
                 </label>
             </div>
-
             <div class="form-group">
                 <label class="label">
-                    <span class="title">Nivel de Cuarentena</span>
+                    <span class="title">Cuarentena</span>
                     <select id="quarantineLevel" class="input-field">
                         <option value="1.0">Sin Restricciones (100%)</option>
                         <option value="0.75">Distanciamiento Social (75%)</option>
@@ -71,73 +69,64 @@
 
             <div class="container-btn" onclick="simular()">
                 <a href="#" id="simularBtn" class="button type--C">
-                    <div class="button__line"></div>
+                  <div class="button__line"></div>
                     <div class="button__line"></div>
                     <span class="button__text">SIMULAR</span>
                     <div class="button__drow1"></div>
                     <div class="button__drow2"></div>
                 </a>
             </div>
+
+            <div style="display: flex; gap: 8px; margin-top: 15px; justify-content: space-between;">
+                <button onclick="guardarEscenario()" style="background: #1E3A5F; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 11px; flex: 1;">💾 FIJAR</button>
+                <button onclick="descargarCSV()" style="background: #2ecc71; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 11px; flex: 1;">📊 EXPORTAR</button>
+            </div>
         </section>
 
         <section class="panel chart-panel">
-           <div class="menu-wrapper">
-    <label class="hamburger">
-        <input type="checkbox" id="menuToggle">
-        <svg viewBox="0 0 32 32">
-            <path class="line line-top-bottom" d="M27 10 13 10C10.8 10 9 8.2 9 6 9 3.5 10.8 2 13 2 15.2 2 17 3.8 17 6L17 26C17 28.2 18.8 30 21 30 23.2 30 25 28.2 25 26 25 23.8 23.2 22 21 22L7 22"></path>
-            <path class="line" d="M7 16 27 16"></path>
-        </svg>
-
-        <div class="chart-controls">
-            <div class="view-selector">
+            <div class="menu-wrapper">
+                <label class="hamburger">
+                    <input type="checkbox" id="menuToggle">
+                    <svg viewBox="0 0 32 32">
+                        <path class="line line-top-bottom" d="M27 10 13 10C10.8 10 9 8.2 9 6 9 3.5 10.8 2 13 2 15.2 2 17 3.8 17 6L17 26C17 28.2 18.8 30 21 30 23.2 30 25 28.2 25 26 25 23.8 23.2 22 21 22L7 22"></path>
+                        <path class="line" d="M7 16 27 16"></path>
+                    </svg>
+                    <div class="chart-controls">
+                        <div class="view-selector">
                 <p style=" font-weight: bold; margin-bottom: 10px;">Visualización</p>
                 <button class="view-btn" onclick="cambiarVista('logistica')">Curva Analítica</button>
                 <button class="view-btn" onclick="cambiarVista('sir')">Modelo SIR</button>
                 <button class="view-btn" onclick="cambiarVista('incidencia')">Casos Diarios</button>
                 <button class="view-btn" onclick="cambiarVista('reproduccion')">Tasa de Reproducción</button>
-            </div>
-        </div>
-    </label>
-</div>
-
-            <div id="mainLoader" class="loader" style="display: none;">
-                <div class="loader-square"></div>
-                <div class="loader-square"></div>
-                <div class="loader-square"></div>
-                <div class="loader-square"></div>
-                <div class="loader-square"></div>
-                <div class="loader-square"></div>
-                <div class="loader-square"></div>
+                <button class="view-btn" onclick="escenariosFijados=[]; graficar();" style="color: red;">🗑 Limpiar Escenarios</button>
             </div>
 
+                    </div>
+                </label>
+                <div id="mainLoader" class="loader" style="display: none;">
+                <div class="loader-square"></div>
+                <div class="loader-square"></div>
+                <div class="loader-square"></div>
+                <div class="loader-square"></div>
+                <div class="loader-square"></div>
+                <div class="loader-square"></div>
+                <div class="loader-square"></div>
+            </div>
+            </div>
             <canvas id="grafica"></canvas>
         </section>
 
         <section class="panel info-panel">
-            <h2 class="info-title">Métricas del Punto</h2>
-            <div class="info-item">
-                <span class="info-label">⏱ Tiempo</span>
-                <span class="value" id="tiempo">-</span>
-            </div>
-            <div class="info-item">
-                <span class="info-label">📈 Analítica</span>
-                <span class="value" id="val_analitica">-</span>
-            </div>
-            <div class="info-item">
-                <span class="info-label">🔢 Numérica</span>
-                <span class="value" id="val_numerica">-</span>
-            </div>
+            <h2 class="info-title">Métricas</h2>
+            <div class="info-item"><span>⏱ Tiempo</span><span class="value" id="tiempo">-</span></div>
+            <div class="info-item"><span>📈 Analítica</span><span class="value" id="val_analitica">-</span></div>
+            <div class="info-item"><span>🔢 Numérica</span><span class="value" id="val_numerica">-</span></div>
         </section>
     </main>
 </div>
 
 <div id="modal" class="modal">
-    <div class="modal-content">
-        <span id="closeModal">&times;</span>
-        <h2 id="modalTitle"></h2>
-        <p id="modalText"></p>
-    </div>
+    <div class="modal-content"><span id="closeModal">&times;</span><h2 id="modalTitle"></h2><p id="modalText"></p></div>
 </div>
 
 <script src="/static/script.js"></script>
