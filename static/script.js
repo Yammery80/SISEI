@@ -20,10 +20,10 @@ async function simular() {
     if (botton) botton.classList.add("loading");
     if (textButton) textButton.innerText = "Simulando...";
 
-    try { 
+    try {   
         const url = (ciudad && ciudad !== "Ninguna" && ciudad !== "-") ? '/simular/ciudad' : '/simular';
         
-        const response = await fetch('/simular', {
+        const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ i0: I0, beta: beta, tiempo: t_max, factor_cuarentena: factor, ciudad: ciudad })
@@ -31,6 +31,8 @@ async function simular() {
 
         const data = await response.json();
         datosGlobales = data;
+
+        ejecutarRenderizadoSegunVista(vistaActual);
         
         const t = data.t || data.puntos_x;
         const analitica = data.analitica || data.puntos_y;
@@ -61,61 +63,8 @@ async function simular() {
         if (textButton) textButton.innerText = "SIMULAR";
     }
     
-    try {
-        const url = (ciudad && ciudad !== "Ninguna" && ciudad !== "-") ? '/simular/ciudad' : '/simular';
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                i0: I0, beta: beta, tiempo: t_max,
-                factor_cuarentena: factor, ciudad: ciudad
-            })
-        });
 
-        const data = await response.json();
-        datosGlobales = data;
-
-        ejecutarRenderizadoSegunVista(vistaActual);
-        
-        const final = (data.analitica || data.puntos_y).slice(-1)[0];
-        procesarAlertas(final);
-
-    } catch (err) {
-        console.error("Error:", err);
-    } finally {
-    }
 }
-
-// --- FUNCIÓN DE BÚSQUEDA ---
-const buscarCiudad = async () => {
-    const ciudadNombre = document.getElementById('cityInput').value;
-
-    if (!ciudadNombre) {
-        alert("Escribe el nombre de una ciudad");
-        return;
-    }
-
-    try {
-        const response = await fetch(`/api/buscar_ciudad?nombre=${encodeURIComponent(ciudadNombre)}`);
-        
-        if (!response.ok) {
-            alert("No se encontró la ciudad.");
-            return;
-        }
-
-        const data = await response.json();
-
-        // Inyectar en I0 y actualizar etiquetas
-        document.getElementById('cityName').innerText = data.nombre;
-        document.getElementById('cityPop').innerText = data.poblacion.toLocaleString();
-
-        // Disparo automático
-        simular();
-
-    } catch (error) {
-        console.error("Error en búsqueda:", error);
-    }
-};
 
 
 // --- SOPORTE Y GRÁFICA ---
@@ -369,7 +318,6 @@ cityInput.addEventListener('input', (e) => {
 });
 
 let vistaActual = 'logistica';
-let datosGlobales = null; // Para guardar lo que mande Flask
 
 function cambiarVista(nuevaVista) {
     vistaActual = nuevaVista;
@@ -403,7 +351,7 @@ function cambiarVista(nuevaVista) {
     if (!datosGlobales) return;
     
     const loaderVista = document.getElementById('mainLoader');
-    loader.style.display = "block"; 
+    loaderVista.style.display = "block"; 
     vistaActual = nuevaVista;
 
     setTimeout(() => {
@@ -487,17 +435,17 @@ function cambiarVista(nuevaVista) {
             }
         });
 
-        loader.style.display = "none";
+        loaderM.style.display = "none";
         document.getElementById('menuToggle').checked = false;
     }, 600);
 
     vistaActual = nuevaVista;
-    const loader = document.getElementById('mainLoader');
-    loader.style.display = "block";
+    const loaderM = document.getElementById('mainLoader');
+    loaderM.style.display = "block";
 
     setTimeout(() => {
         ejecutarRenderizadoSegunVista(nuevaVista);
-        loader.style.display = "none";
+        loaderM.style.display = "none";
         document.getElementById('menuToggle').checked = false;
     }, 400);
 }
