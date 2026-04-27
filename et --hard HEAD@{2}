@@ -1,0 +1,18 @@
+[33m30d9e09[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m HEAD@{0}: pull origin main: Fast-forward
+[33m6b51c13[m HEAD@{1}: commit: cambios en logica y correcion de errores en las graficas y parametros
+[33mf862ec8[m HEAD@{2}: commit: ultimos cambios y correcion de logica en graficas
+[33mc80e273[m HEAD@{3}: commit: mejoras visuales y funciones adicionales
+[33mae48b28[m HEAD@{4}: commit (merge): Unificación de cambios del equipo y locales
+[33me3fd5e0[m HEAD@{5}: commit: respaldo aplicación de bernuolli
+[33m7fb3cb7[m HEAD@{6}: reset: moving to HEAD@{2}
+[33m5e8f8b2[m HEAD@{7}: rebase (finish): returning to refs/heads/main
+[33m5e8f8b2[m HEAD@{8}: pull --rebase origin main (start): checkout 5e8f8b28ba1460efb469d6979a8aaa20967ef886
+[33m7fb3cb7[m HEAD@{9}: commit: aplicación de bernoulli en el sistema
+[33mcd19a6d[m HEAD@{10}: commit: codigo corregido
+[33m8e613ee[m HEAD@{11}: commit: tercera prueba
+[33m08b34e7[m HEAD@{12}: commit: segunda prueba
+[33m285c7ca[m HEAD@{13}: commit: primera prueba
+[33mff35758[m HEAD@{14}: commit: correcion de commit
+[33m2e0b75b[m HEAD@{15}: pull origin main --allow-unrelated-histories: Merge made by the 'ort' strategy.
+[33m9202c61[m HEAD@{16}: Branch: renamed refs/heads/master to refs/heads/main
+[33m9202c61[m HEAD@{18}: commit (initial): cambio del boton
